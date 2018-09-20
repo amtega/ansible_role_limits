@@ -1,2 +1,54 @@
 ---
 # Tasks for testing role
+
+- name: run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-6`)
+           || starts_with(name, `centos-7`)
+           || starts_with(name, `fedora-27`)
+           || starts_with(name, `fedora-28`) ]
+
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: test limits role
+  hosts: docker_sandbox_containers
+  roles:
+    - amtega.limits
+  vars:
+    limits_file: /etc/security/limits.d/test.conf
+
+    limits:
+      - domain: test
+        dest: "{{ limits_file }}"
+        limit_item: fsize
+        value: 1000000
+
+    limits_defaults:
+      limit_type: "-"
+      use_max: yes
+  tasks:
+    - name: read limits file
+      shell: "cat {{ limits_file }}"
+      changed_when: false
+      register: read_limits_result
+
+    - name: check that required limits are present
+      assert:
+        that:
+          - read_limits_result.stdout is search("test.*-.*fsize.*1000000")
+  tags:
+    - idempotence
+
+- name: cleanup docker docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - sandbox

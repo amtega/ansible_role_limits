@@ -1,2 +1,45 @@
 ---
 # Role tasks
+
+- name: assert platform is supported
+  assert:
+    that:
+      - distribution in limits_supported_distributions
+      - >-
+        ansible_facts.distribution_version
+        is version(limits_supported_versions[distribution], ">=")
+  vars:
+    distribution: "{{ ansible_facts.distribution | lower }}"
+  tags:
+    - role::limits
+    - role::limits::check
+
+- name: setup limits
+  pam_limits:
+    backup: >-
+      {{ item.backup | default(limits_defaults.backup) | default(omit) }}
+    comment: >-
+      {{ item.comment | default(limits_defaults.comment) | default(omit) }}
+    dest: >-
+      {{ item.dest | default(limits_defaults.dest) | default(omit) }}
+    domain: >-
+      {{ item.domain | default(limits_defaults.domain) | default(omit) }}
+    limit_item: >-
+      {{ item.limit_item | default(limits_defaults.limit_item) | default(omit) }}
+    limit_type: >-
+      {{ item.limit_type | default(limits_defaults.limit_type) | default(omit) }}
+    use_max: >-
+      {{ item.use_max | default(limits_defaults.use_max) | default(omit) }}
+    use_min: >-
+      {{ item.use_min | default(limits_defaults.use_min) | default(omit) }}
+    value: >-
+      {{ item.value | default(limits_defaults.value) | default(omit) }}
+  loop: "{{ limits }}"
+  loop_control:
+    label: >-
+      {{ item.dest | default(limits_default_config_path) }}
+      {{ item.domain | default(limits_defaults.domain) }}
+      {{ item.limit_item | default(limits_defaults.limit_item) }}
+      {{ item.limit_type | default(limits_defaults.limit_type) }}
+  tags:
+    - role::limits
