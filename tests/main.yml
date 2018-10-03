@@ -24,10 +24,13 @@
     limits_file: /etc/security/limits.d/test.conf
 
     limits:
-      - domain: test
-        dest: "{{ limits_file }}"
-        limit_item: fsize
-        value: 1000000
+      - dest: "{{ limits_file }}"
+        domain: test
+        items:
+          - limit_item: fsize
+            value: 1000000
+          - limit_item: nofile
+            value: 1000
 
     limits_defaults:
       limit_type: "-"
@@ -42,6 +45,7 @@
       assert:
         that:
           - read_limits_result.stdout is search("test.*-.*fsize.*1000000")
+          - read_limits_result.stdout is search("test.*-.*nofile.*100")
   tags:
     - idempotence
 

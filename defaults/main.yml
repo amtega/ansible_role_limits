@@ -1,20 +1,49 @@
 ---
 # Role default lower priority variables
 
-# List of dicts with limits to configure. The dicts have the same attributes
-# that the ones expected by the ansible pam_limits module. For example:
+# List of dicts with limits to configure. The attributes have the same meaning
+# that the equivalents in the pam_limits module
+#
+# limits:
+#   - dest: <dest>
+#     domain: <domain>
+#     items:                        # List of dicts with the limits to apply
+#       - limit_item: <limit_item>
+#         limit_type: <limit_type>
+#         use_max: <use_max>
+#         use_min: <use_min>
+#         value: <value>
+#         backup: <yes_no>
+#         comment: <comment>
+#
+# Sample:
 #
 # limits:
 #   - domain: *
-#     limit_type: hard
-#     limit_item: fsize
-#     value: 1000000
-#     use_max: yes
+#     items:
+#       - limit_item: fsize
+#         limit_type: soft
+#         value: 500000
+#         use_max: yes
+#       - limit_item: fsize
+#         limit_type: hard
+#         value: 1000000
+#         use_max: yes
 
 limits: []
 
-# Dicitionary with the defaults options to use if no other ones are specified in
-# the `limits` variable. The members of the dict are the same attributes
-# that the ones expected by the ansible pam_limits module
+# Dicitionary with the defaults values to use if no other ones are specified in
+# the `limits` variable.
+#
+# limits_defaults:
+#   dest: <dest>
+#   domain: <domain>
+#   limit_item: <limit_item>
+#   limit_type: <limit_type>
+#   use_max: <use_max>
+#   use_min: <use_min>
+#   value: <value>
+#   backup: <yes_no>
+#   comment: <comment>
 
 limits_defaults: {}
