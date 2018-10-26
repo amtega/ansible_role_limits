@@ -2,6 +2,7 @@
 # Role dependencies
 
 galaxy_info:
+  role_name: limits
   author: Juan Antonio Valiño García
   description: Manage limits through the pam_limits module
   company: AMTEGA - Xunta de Galicia
