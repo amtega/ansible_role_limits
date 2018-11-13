@@ -4,7 +4,7 @@ This is an [Ansible](http://www.ansible.com) role which manages limits through t
 
 ## Requirements
 
-[Ansible 2.6+](http://docs.ansible.com/ansible/latest/intro_installation.html)
+[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
 
 ## Role Variables
 
@@ -12,7 +12,7 @@ A list of all the default variables for this role is available in `defaults/main
 
 ## Dependencies
 
-None.
+- [amtega.check_platform](https://galaxy.ansible.com/amtega/check_platform)
 
 ## Example Playbook
 

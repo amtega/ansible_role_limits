@@ -1,39 +1,35 @@
 ---
 # Role tasks
 
-- name: assert platform is supported
-  assert:
-    that:
-      - distribution in limits_supported_distributions
-      - >-
-        ansible_facts.distribution_version
-        is version(limits_supported_versions[distribution], ">=")
-  vars:
-    distribution: "{{ ansible_facts.distribution | lower }}"
-  tags:
-    - role::limits
-    - role::limits::check
-
 - name: setup limits
   pam_limits:
     backup: >-
-      {{ item.1.backup | default(limits_defaults.backup) | default(omit) }}
+      {{ item.1.backup
+         | default(limits_defaults.backup) | default(omit) }}
     comment: >-
-      {{ item.1.comment | default(limits_defaults.comment) | default(omit) }}
+      {{ item.1.comment
+         | default(limits_defaults.comment) | default(omit) }}
     dest: >-
-      {{ item.0.dest | default(limits_defaults.dest) | default(omit) }}
+      {{ item.0.dest
+         | default(limits_defaults.dest) | default(omit) }}
     domain: >-
-      {{ item.0.domain | default(limits_defaults.domain) | default(omit) }}
+      {{ item.0.domain
+         | default(limits_defaults.domain) | default(omit) }}
     limit_item: >-
-      {{ item.1.limit_item | default(limits_defaults.limit_item) | default(omit) }}
+      {{ item.1.limit_item
+         | default(limits_defaults.limit_item) | default(omit) }}
     limit_type: >-
-      {{ item.1.limit_type | default(limits_defaults.limit_type) | default(omit) }}
+      {{ item.1.limit_type
+         | default(limits_defaults.limit_type) | default(omit) }}
     use_max: >-
-      {{ item.1.use_max | default(limits_defaults.use_max) | default(omit) }}
+      {{ item.1.use_max
+         | default(limits_defaults.use_max) | default(omit) }}
     use_min: >-
-      {{ item.1.use_min | default(limits_defaults.use_min) | default(omit) }}
+      {{ item.1.use_min
+         | default(limits_defaults.use_min) | default(omit) }}
     value: >-
-      {{ item.1.value | default(limits_defaults.value) | default(omit) }}
+      {{ item.1.value
+         | default(limits_defaults.value) | default(omit) }}
   loop: "{{ limits | subelements('items') }}"
   loop_control:
     label: >-
