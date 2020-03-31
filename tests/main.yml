@@ -16,7 +16,7 @@
   tags:
     - sandbox
 
-- name: test limits role
+- name: Test limits role
   hosts: docker_sandbox_containers
   roles:
     - amtega.limits
@@ -36,12 +36,12 @@
       limit_type: "-"
       use_max: yes
   tasks:
-    - name: read limits file
+    - name: Read limits file
       shell: "cat {{ limits_file }}"
       changed_when: false
       register: read_limits_result
 
-    - name: check that required limits are present
+    - name: Check that required limits are present
       assert:
         that:
           - read_limits_result.stdout is search("test.*-.*fsize.*1000000")

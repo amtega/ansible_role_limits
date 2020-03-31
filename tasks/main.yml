@@ -1,7 +1,7 @@
 ---
 # Role tasks
 
-- name: setup limits
+- name: Setup limits
   pam_limits:
     backup: >-
       {{ item.1.backup
