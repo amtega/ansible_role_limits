@@ -16,6 +16,21 @@
   tags:
     - sandbox
 
+- name: Prepare some variables required by the tests
+  hosts: docker_sandbox_containers
+  tasks:
+    - name: Setup some variables required by tests
+      set_fact:
+        limits_testhostvars:
+          - domain: hostvars
+            items:
+              - limit_item: fsize
+                value: 1000000
+              - limit_item: nofile
+                value: 1000
+  tags:
+    - idempotence
+
 - name: Test limits role
   hosts: docker_sandbox_containers
   roles:
@@ -24,7 +39,7 @@
     limits_file: /etc/security/limits.d/test.conf
 
     limits:
-      - dest: "{{ limits_file }}"
+      - dest: "{{ limits_default_config_path }}"
         domain: test
         items:
           - limit_item: fsize
@@ -33,11 +48,12 @@
             value: 1000
 
     limits_defaults:
+      dest: "{{ limits_default_config_path }}"
       limit_type: "-"
       use_max: yes
   tasks:
     - name: Read limits file
-      shell: "cat {{ limits_file }}"
+      shell: "cat {{ limits_default_config_path }}"
       changed_when: false
       register: read_limits_result
 
@@ -46,6 +62,8 @@
         that:
           - read_limits_result.stdout is search("test.*-.*fsize.*1000000")
           - read_limits_result.stdout is search("test.*-.*nofile.*100")
+          - read_limits_result.stdout is search("hostvars.*-.*fsize.*1000000")
+          - read_limits_result.stdout is search("hostvars.*-.*nofile.*100")
   tags:
     - idempotence
 
