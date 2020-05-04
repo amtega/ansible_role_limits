@@ -1,41 +1,49 @@
 ---
 # Role tasks
-
-- name: Setup limits
-  pam_limits:
-    backup: >-
-      {{ item.1.backup
-         | default(limits_defaults.backup) | default(omit) }}
-    comment: >-
-      {{ item.1.comment
-         | default(limits_defaults.comment) | default(omit) }}
-    dest: >-
-      {{ item.0.dest
-         | default(limits_defaults.dest) | default(omit) }}
-    domain: >-
-      {{ item.0.domain
-         | default(limits_defaults.domain) | default(omit) }}
-    limit_item: >-
-      {{ item.1.limit_item
-         | default(limits_defaults.limit_item) | default(omit) }}
-    limit_type: >-
-      {{ item.1.limit_type
-         | default(limits_defaults.limit_type) | default(omit) }}
-    use_max: >-
-      {{ item.1.use_max
-         | default(limits_defaults.use_max) | default(omit) }}
-    use_min: >-
-      {{ item.1.use_min
-         | default(limits_defaults.use_min) | default(omit) }}
-    value: >-
-      {{ item.1.value
-         | default(limits_defaults.value) | default(omit) }}
-  loop: "{{ limits | subelements('items') }}"
-  loop_control:
-    label: >-
-      {{ item.0.dest | default(limits_default_config_path) }}
-      {{ item.0.domain | default(limits_defaults.domain) }}
-      {{ item.1.limit_item | default(limits_defaults.limit_item) }}
-      {{ item.1.limit_type | default(limits_defaults.limit_type) }}
+- block:
+    - name: Setup limits
+      pam_limits:
+        backup: >-
+          {{ item.1.backup
+             | default(limits_defaults.backup) | default(omit) }}
+        comment: >-
+          {{ item.1.comment
+             | default(limits_defaults.comment) | default(omit) }}
+        dest: >-
+          {{ item.0.dest
+             | default(limits_defaults.dest) | default(omit) }}
+        domain: >-
+          {{ item.0.domain
+             | default(limits_defaults.domain) | default(omit) }}
+        limit_item: >-
+          {{ item.1.limit_item
+             | default(limits_defaults.limit_item) | default(omit) }}
+        limit_type: >-
+          {{ item.1.limit_type
+             | default(limits_defaults.limit_type) | default(omit) }}
+        use_max: >-
+          {{ item.1.use_max
+             | default(limits_defaults.use_max) | default(omit) }}
+        use_min: >-
+          {{ item.1.use_min
+             | default(limits_defaults.use_min) | default(omit) }}
+        value: >-
+          {{ item.1.value
+             | default(limits_defaults.value) | default(omit) }}
+      loop: "{{ limits_managed | subelements('items') }}"
+      loop_control:
+        label: >-
+          {{ item.0.dest | default(limits_default_config_path) }}
+          {{ item.0.domain | default(limits_defaults.domain) }}
+          {{ item.1.limit_item | default(limits_defaults.limit_item) }}
+          {{ item.1.limit_type | default(limits_defaults.limit_type) }}
+  vars:
+    limits_managed: >-
+      {{ limits
+         + ((limits_load_from_hostvars)
+            | ternary(limits_hostvars
+                      | default([])
+                      | flatten,
+                      [])) }}
   tags:
     - role::limits
