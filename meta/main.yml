@@ -28,3 +28,10 @@ dependencies:
       centos: 6
       fedora: 29
       rhel: 6
+  - role: amtega.select_hostvars
+    vars:
+      select_hostvars_query:
+        pattern: "^limits_.*"
+        fact_name: limits_hostvars
+        output_type: list
+    when: limits_load_from_hostvars | bool
