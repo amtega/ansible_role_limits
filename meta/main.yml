@@ -32,6 +32,7 @@ dependencies:
     vars:
       select_hostvars_query:
         pattern: "^limits_.*"
+        exclude_pattern: "^limits_defaults$"
         fact_name: limits_hostvars
         output_type: list
     when: limits_load_from_hostvars | bool
