@@ -1,0 +1,18 @@
+---
+
+- name: Verify
+  hosts: molecule_hosts
+  gather_facts: no
+  tasks:
+    - name: Read limits file
+      shell: cat /etc/security/limits.conf
+      changed_when: false
+      register: read_limits_result
+
+    - name: Check that required limits are present
+      assert:
+        that:
+          - read_limits_result.stdout is search("test.*-.*fsize.*1000000")
+          - read_limits_result.stdout is search("test.*-.*nofile.*100")
+          - read_limits_result.stdout is search("hostvars.*-.*fsize.*1000000")
+          - read_limits_result.stdout is search("hostvars.*-.*nofile.*100")
